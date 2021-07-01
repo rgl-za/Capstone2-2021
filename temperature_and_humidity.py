@@ -9,11 +9,8 @@ import urllib.request
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
  
-#온도센서
-DIGIT = 4
- 
-#냉각팬
-fan = 13
+DIGIT = 4 #온도센서
+fan = 13 #냉각팬
  
 GPIO.setup(DIGIT,GPIO.IN)
 GPIO.setup(fan,GPIO.OUT)
