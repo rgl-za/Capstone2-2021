@@ -9,10 +9,10 @@ import urllib.request
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
  
-#¿Âµµ¼¾¼­
+#ì˜¨ë„ì„¼ì„œ
 DIGIT = 4
  
-#³Ã°¢ÆÒ
+#ëƒ‰ê°íŒ¬
 fan = 13
  
 GPIO.setup(DIGIT,GPIO.IN)
@@ -20,32 +20,32 @@ GPIO.setup(fan,GPIO.OUT)
  
 GPIO.output(fan,GPIO.LOW)
  
-farm_id='1' #¶óÁîº£¸®ÆÄÀÌ id
-old = "0" #½Ã°£ ÃÊ±âÈ­
+farm_id='1' #ë¼ì¦ˆë² ë¦¬íŒŒì´ id
+old = "0" #ì‹œê°„ ì´ˆê¸°í™”
 count=0              
 old_2 = "0"
  
-url_1 = "http://easyfarm.dothome.co.kr/db/user_data.php" #»ç¿ëÀÚ°¡ Å°¿ì´Â Ç°Á¾ÀÇ Á¤º¸
+url_1 = "http://easyfarm.dothome.co.kr/db/user_data.php" #ì‚¬ìš©ìê°€ í‚¤ìš°ëŠ” í’ˆì¢…ì˜ ì •ë³´
 data_1 = urllib.request.urlopen(url_1).read().decode('utf-8')
 j_1 = json.loads(data_1)
 temp_1 = j_1[farm_id]['plant']
  
-url_2 = "http://easyfarm.dothome.co.kr/db/raspberry.php" #Ç°Á¾¿¡ ´ëÇÑ Á¤º¸
+url_2 = "http://easyfarm.dothome.co.kr/db/raspberry.php" #í’ˆì¢…ì— ëŒ€í•œ ì •ë³´
 data_2 = urllib.request.urlopen(url_2).read().decode('utf-8')
 j_2 = json.loads(data_2)
-temp_2 = j_2[temp_1]['budding_temp'] #Ç°Á¾ÀÇ ¹ß¾Æ ¿Âµµ
-change_temp = j_2[temp_1]['upgrade'] #Ç°Á¾ÀÌ Àß ÀÚ¶ó´Â ¿Âµµ
+temp_2 = j_2[temp_1]['budding_temp'] #í’ˆì¢…ì˜ ë°œì•„ ì˜¨ë„
+change_temp = j_2[temp_1]['upgrade'] #í’ˆì¢…ì´ ì˜ ìë¼ëŠ” ì˜¨ë„
  
 try:
     while True:
         time.sleep(1)
  
-        t_1 = time.strftime('%Y-%m-%d', time.localtime(time.time())) #¹ß¾Æ ¿Âµµ¿¡¼­ Ç°Á¾ÀÌ Àß ÀÚ¶ó´Â ¿Âµµ·Î ¹Ù²ãÁÖ±â À§ÇØ ³¯Â¥¸¦ Ä«¿îÆ® ÇØÁÜ
+        t_1 = time.strftime('%Y-%m-%d', time.localtime(time.time())) #ë°œì•„ ì˜¨ë„ì—ì„œ í’ˆì¢…ì´ ì˜ ìë¼ëŠ” ì˜¨ë„ë¡œ ë°”ê¿”ì£¼ê¸° ìœ„í•´ ë‚ ì§œë¥¼ ì¹´ìš´íŠ¸ í•´ì¤Œ
         if(old != t_1):
             count += 1
             old = t_1
  
-        if(count == int(change_temp)): #¹ß¾Æ ½Ã±â°¡ Áö³ª¸é Á¦¾îÇÒ ¿Âµµ ¹üÀ§¸¦ ¹Ù²ãÁÜ
+        if(count == int(change_temp)): #ë°œì•„ ì‹œê¸°ê°€ ì§€ë‚˜ë©´ ì œì–´í•  ì˜¨ë„ ë²”ìœ„ë¥¼ ë°”ê¿”ì¤Œ
             temp_2 = j_2[temp_1]['good_temp']
  
         h,t = dht.read_retry(dht.DHT22, DIGIT)
@@ -53,7 +53,7 @@ try:
  
         temp = temp_2.split("~")
  
-        if t > float(temp[1]): #¿Âµµ¿Í ½Àµµ°¡ ÀÓ°èÄ¡º¸´Ù ³ôÀ¸¸é ³Ã°¢ÆÒÀÌ ÄÑÁü
+        if t > float(temp[1]): #ì˜¨ë„ì™€ ìŠµë„ê°€ ì„ê³„ì¹˜ë³´ë‹¤ ë†’ìœ¼ë©´ ëƒ‰ê°íŒ¬ì´ ì¼œì§
             GPIO.output(fan,GPIO.HIGH)
            
         else:
@@ -62,23 +62,23 @@ try:
         t=format(t,".2f")
         h=format(h,".2f")
        
-        #1½Ã°£ ¸¶´Ù DB·Î µ¥ÀÌÅÍ¸¦ º¸³¿
+        #1ì‹œê°„ ë§ˆë‹¤ DBë¡œ ë°ì´í„°ë¥¼ ë³´ëƒ„
         t_2 = time.strftime('%H', time.localtime(time.time()))
         if old_2 != t_2:
-            #À¥¿¡¼­ »ç¿ëÀÚ°¡ Ç°Á¾À» ¹Ù²åÀ» °æ¿ì »õ·Î¿î Á¤º¸¸¦ ¹İ¿µÇÔ.
-            url_1 = "http://easyfarm.dothome.co.kr/db/user_data.php" #»ç¿ëÀÚ°¡ Å°¿ì´Â Ç°Á¾ÀÇ Á¤º¸
+            #ì›¹ì—ì„œ ì‚¬ìš©ìê°€ í’ˆì¢…ì„ ë°”ê¿¨ì„ ê²½ìš° ìƒˆë¡œìš´ ì •ë³´ë¥¼ ë°˜ì˜í•¨.
+            url_1 = "http://easyfarm.dothome.co.kr/db/user_data.php" #ì‚¬ìš©ìê°€ í‚¤ìš°ëŠ” í’ˆì¢…ì˜ ì •ë³´
             data_1 = urllib.request.urlopen(url_1).read().decode('utf-8')
             j_1 = json.loads(data_1)
             temp_1 = j_1[farm_id]['plant']
  
-            url_2 = "http://easyfarm.dothome.co.kr/db/raspberry.php" #Ç°Á¾¿¡ ´ëÇÑ Á¤º¸
+            url_2 = "http://easyfarm.dothome.co.kr/db/raspberry.php" #í’ˆì¢…ì— ëŒ€í•œ ì •ë³´
             data_2 = urllib.request.urlopen(url_2).read().decode('utf-8')
             j_2 = json.loads(data_2)
-            temp_2 = j_2[temp_1]['budding_temp'] #Ç°Á¾ÀÇ ¹ß¾Æ ¿Âµµ
-            change_temp = j_2[temp_1]['upgrade'] #Ç°Á¾ÀÌ Àß ÀÚ¶ó´Â ¿Âµµ
+            temp_2 = j_2[temp_1]['budding_temp'] #í’ˆì¢…ì˜ ë°œì•„ ì˜¨ë„
+            change_temp = j_2[temp_1]['upgrade'] #í’ˆì¢…ì´ ì˜ ìë¼ëŠ” ì˜¨ë„
  
             data = {'farm_id':farm_id, 'plant':temp_1, 'temperature': t, 'humidity':h}
-            requests.post('http://easyfarm.dothome.co.kr/db/temperature.php',data=data).text #µ¥ÀÌÅÍ °ªÀ» À¥¼­¹ö·Î º¸³¿
+            requests.post('http://easyfarm.dothome.co.kr/db/temperature.php',data=data).text #ë°ì´í„° ê°’ì„ ì›¹ì„œë²„ë¡œ ë³´ëƒ„
             old_2 = t_2
  
 finally:
