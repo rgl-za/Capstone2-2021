@@ -9,8 +9,7 @@ import urllib.request
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
  
-#토양센서핀
-DIGIT = 23
+DIGIT = 23 #토양센서핀
  
 #수중펌프 모터1핀
 A1A = 5
