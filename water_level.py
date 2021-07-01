@@ -5,13 +5,13 @@ import spidev
  
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-pins={'red':17, 'green':27, 'blue':22} #RGB LED ¸ğµâÀÇ R, G, BÀÇ ÇÉ
+pins={'red':17, 'green':27, 'blue':22} #RGB LED ëª¨ë“ˆì˜ R, G, Bì˜ í•€
  
-for i in pins: #RGB LED ¸ğµâÀÇ R, G, BÀÇ ÇÉÀ» ¼³Á¤
+for i in pins: #RGB LED ëª¨ë“ˆì˜ R, G, Bì˜ í•€ì„ ì„¤ì •
     GPIO.setup(pins[i], GPIO.OUT)
     GPIO.output(pins[i], GPIO.HIGH)
  
-red=GPIO.PWM(pins['red'], 2000) #ÃÊ´ç ÆŞ½ºÀÇ ÁÖÆÄ¼ö¸¦ À¯ÁöÇÑ Ã¤, ÆŞ½ºÀÇ ±æÀÌ¸¦ º¯È­½ÃÅ°´Â ±â¼ú, µğÁöÅĞ Ãâ·Â¿¡ ºñÇØ ¸ğµç »ö»óÀ» Ãâ·ÂÇÒ ¼ö ÀÖÀ½
+red=GPIO.PWM(pins['red'], 2000) #ì´ˆë‹¹ í„ìŠ¤ì˜ ì£¼íŒŒìˆ˜ë¥¼ ìœ ì§€í•œ ì±„, í„ìŠ¤ì˜ ê¸¸ì´ë¥¼ ë³€í™”ì‹œí‚¤ëŠ” ê¸°ìˆ , ë””ì§€í„¸ ì¶œë ¥ì— ë¹„í•´ ëª¨ë“  ìƒ‰ìƒì„ ì¶œë ¥í•  ìˆ˜ ìˆìŒ
 green=GPIO.PWM(pins['green'], 2000)
 blue=GPIO.PWM(pins['blue'], 2000)
    
@@ -25,20 +25,20 @@ def analog_read(channel):
     return adc_out
  
 while True:
-    voltage=analog_read(1)*3.3/1024 #¼öÀ§¼¾¼­¿¡¼­ µ¥ÀÌÅÍ¸¦ °¡Á®¿È
+    voltage=analog_read(1)*3.3/1024 #ìˆ˜ìœ„ì„¼ì„œì—ì„œ ë°ì´í„°ë¥¼ ê°€ì ¸ì˜´
     print(voltage)
     time.sleep(1)
  
-    red.start(0) #RGB LED ¸ğµâ ÃÊ±â°ª ¼³Á¤
+    red.start(0) #RGB LED ëª¨ë“ˆ ì´ˆê¸°ê°’ ì„¤ì •
     green.start(0)
     blue.start(0)
        
-    if(voltage<1): #¹°ÀÇ ³ôÀÌ°¡ ÀÓ°èÄ¡º¸´Ù ³·À¸¸é RGB LED ¸ğµâÀÌ »¡°£»öÀ¸·Î ÄÑÁü
-        red.ChangeDutyCycle(100) #0~100±îÁö ÀÔ·Â °¡´É, ¹à±âÁ¶Àı°ú ºñ½Á ÀÔ·Â °ªÀÌ 20ÀÌ¸é HIGH 20, LOW 80
+    if(voltage<1): #ë¬¼ì˜ ë†’ì´ê°€ ì„ê³„ì¹˜ë³´ë‹¤ ë‚®ìœ¼ë©´ RGB LED ëª¨ë“ˆì´ ë¹¨ê°„ìƒ‰ìœ¼ë¡œ ì¼œì§
+        red.ChangeDutyCycle(100) #0~100ê¹Œì§€ ì…ë ¥ ê°€ëŠ¥, ë°ê¸°ì¡°ì ˆê³¼ ë¹„ìŠ· ì…ë ¥ ê°’ì´ 20ì´ë©´ HIGH 20, LOW 80
         green.ChangeDutyCycle(0)
         blue.ChangeDutyCycle(0)
         time.sleep(1)
-    else: #¹°ÀÌ ÃæºĞÈ÷ ÀÖÀ» ¶§ RGB LED ¸ğµâÀÌ ²¨Áü
+    else: #ë¬¼ì´ ì¶©ë¶„íˆ ìˆì„ ë•Œ RGB LED ëª¨ë“ˆì´ êº¼ì§
         red.stop()
         green.stop()
         blue.stop()
