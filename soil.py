@@ -9,14 +9,13 @@ import urllib.request
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
  
-#Åä¾ç¼¾¼­ÇÉ
-DIGIT = 23
+DIGIT = 23 #í† ì–‘ì„¼ì„œí•€
  
-#¼öÁßÆßÇÁ ¸ğÅÍ1ÇÉ
+#ìˆ˜ì¤‘íŒí”„ ëª¨í„°1í•€
 A1A = 5
 A1B = 6
  
-#¼öÁßÆßÇÁ ¸ğÅÍ2ÇÉ
+#ìˆ˜ì¤‘íŒí”„ ëª¨í„°2í•€
 B1A = 26
 B1B = 19
  
@@ -36,18 +35,18 @@ spi=spidev.SpiDev()
 spi.open(0,0)
 spi.max_speed_hz=50000
  
-farm_id='1' #¶óÁîº£¸®ÆÄÀÌ id
-old = "0" #½Ã°£ ÃÊ±âÈ­
+farm_id='1' #ë¼ì¦ˆë² ë¦¬íŒŒì´ id
+old = "0" #ì‹œê°„ ì´ˆê¸°í™”
  
-url_1 = "http://easyfarm.dothome.co.kr/db/user_data.php" #»ç¿ëÀÚ°¡ Å°¿ì´Â Ç°Á¾ÀÇ Á¤º¸
+url_1 = "http://easyfarm.dothome.co.kr/db/user_data.php" #ì‚¬ìš©ìê°€ í‚¤ìš°ëŠ” í’ˆì¢…ì˜ ì •ë³´
 data_1 = urllib.request.urlopen(url_1).read().decode('utf-8')
 j_1 = json.loads(data_1)
 temp_1 = j_1[farm_id]['plant']
  
-url_2 = "http://easyfarm.dothome.co.kr/db/raspberry.php" #Ç°Á¾¿¡ ´ëÇÑ Á¤º¸
+url_2 = "http://easyfarm.dothome.co.kr/db/raspberry.php" #í’ˆì¢…ì— ëŒ€í•œ ì •ë³´
 data_2 = urllib.request.urlopen(url_2).read().decode('utf-8')
 j_2 = json.loads(data_2)
-temp_2 = j_2[temp_1]['water'] #Ç°Á¾ÀÇ ¹° °ø±Ş·®
+temp_2 = j_2[temp_1]['water'] #í’ˆì¢…ì˜ ë¬¼ ê³µê¸‰ëŸ‰
  
 def read_spi_adc(adcChannel):
     adcValue=0
@@ -55,7 +54,7 @@ def read_spi_adc(adcChannel):
     adcValue=((buff[1]&3)<<8)+buff[2]
     return adcValue
  
-def map1(x, input_1, input_2, output_1,output_2):  #Åä¾ç¼¾¼­ µ¥ÀÌÅÍ¸¦ ¹éºĞÀ²·Î ³ªÅ¸³»´Â ÇÔ¼ö
+def map1(x, input_1, input_2, output_1,output_2):  #í† ì–‘ì„¼ì„œ ë°ì´í„°ë¥¼ ë°±ë¶„ìœ¨ë¡œ ë‚˜íƒ€ë‚´ëŠ” í•¨ìˆ˜
     return (x-input_1) * (output_2-output_1)/(input_2-input_1)+output_1
  
 try:
@@ -64,24 +63,24 @@ try:
         adcValue=read_spi_adc(0)
         print("soil: %d"%(adcValue))
         c = 100 - map1(adcValue,0,1023,0,100)
-        #0: ¼öºĞÀÌ ¸¹À½ 1023: ¼öºĞÀÌ ¾øÀ½, 0 => 0%, 1023 =>100%
-	#¼öºĞÀÌ ¸¹À» ¶§ 100%¸¦ ³ªÅ¸³»°í ½Í±â ¶§¹®¿¡ 100¿¡¼­ °ªÀ» »©ÁÜ.
+        #0: ìˆ˜ë¶„ì´ ë§ìŒ 1023: ìˆ˜ë¶„ì´ ì—†ìŒ, 0 => 0%, 1023 =>100%
+	#ìˆ˜ë¶„ì´ ë§ì„ ë•Œ 100%ë¥¼ ë‚˜íƒ€ë‚´ê³  ì‹¶ê¸° ë•Œë¬¸ì— 100ì—ì„œ ê°’ì„ ë¹¼ì¤Œ.
         print(c)
-        temp = temp_2.split("~") #¹üÀ§·Î Ç¥ÇöµÇ¾îÀÖ´Â ¹° °ø±Ş·®À» ¹è¿­·Î ÀúÀå
+        temp = temp_2.split("~") #ë²”ìœ„ë¡œ í‘œí˜„ë˜ì–´ìˆëŠ” ë¬¼ ê³µê¸‰ëŸ‰ì„ ë°°ì—´ë¡œ ì €ì¥
  
-        #¼öºĞÀÌ ÀÓ°èÄ¡º¸´Ù ³·À» ¶§ ¸ğÅÍ°¡ ÄÑÁü
+        #ìˆ˜ë¶„ì´ ì„ê³„ì¹˜ë³´ë‹¤ ë‚®ì„ ë•Œ ëª¨í„°ê°€ ì¼œì§
         if float(temp[0]) > c:  
             adcValue=read_spi_adc(0)
             print("soil: %d"%(adcValue))
             c = 100 - map1(adcValue,0,1023,0,100)
-            GPIO.output(A1A,GPIO.HIGH) #¸ğÅÍ1ÀÌ ÄÑÁü
+            GPIO.output(A1A,GPIO.HIGH) #ëª¨í„°1ì´ ì¼œì§
             GPIO.output(A1B,GPIO.LOW)
-            GPIO.output(B1A,GPIO.HIGH) #¸ğÅÍ2°¡ ÄÑÁü
+            GPIO.output(B1A,GPIO.HIGH) #ëª¨í„°2ê°€ ì¼œì§
             GPIO.output(B1B,GPIO.LOW)
             if float(temp[1]) < c:
-                GPIO.output(A1A,GPIO.LOW) #¸ğÅÍ1ÀÌ ²¨Áü
+                GPIO.output(A1A,GPIO.LOW) #ëª¨í„°1ì´ êº¼ì§
                 GPIO.output(A1B,GPIO.LOW)
-                GPIO.output(B1A,GPIO.LOW) #¸ğÅÍ2°¡ ²¨Áü
+                GPIO.output(B1A,GPIO.LOW) #ëª¨í„°2ê°€ êº¼ì§
                 GPIO.output(B1B,GPIO.LOW)
  
         else:
@@ -92,23 +91,23 @@ try:
  
         c=format(c,".2f")
  
-        #1½Ã°£ °£°İÀ¸·Î DB·Î µ¥ÀÌÅÍ º¸³»±â
-        hour = time.strftime('%H', time.localtime(time.time())) #ÇöÀç ½Ã°£
+        #1ì‹œê°„ ê°„ê²©ìœ¼ë¡œ DBë¡œ ë°ì´í„° ë³´ë‚´ê¸°
+        hour = time.strftime('%H', time.localtime(time.time())) #í˜„ì¬ ì‹œê°„
         if old != hour:
             old = hour
  
-            #À¥¿¡¼­ »ç¿ëÀÚ°¡ Ç°Á¾À» ¹Ù²åÀ» °æ¿ì »õ·Î¿î Á¤º¸¸¦ ¹Ş¾Æ¿Í¼­ ¹İ¿µÇÔ.
-            url_1 = "http://easyfarm.dothome.co.kr/db/user_data.php" #»ç¿ëÀÚ°¡ Å°¿ì´Â Ç°Á¾ÀÇ Á¤º¸
+            #ì›¹ì—ì„œ ì‚¬ìš©ìê°€ í’ˆì¢…ì„ ë°”ê¿¨ì„ ê²½ìš° ìƒˆë¡œìš´ ì •ë³´ë¥¼ ë°›ì•„ì™€ì„œ ë°˜ì˜í•¨.
+            url_1 = "http://easyfarm.dothome.co.kr/db/user_data.php" #ì‚¬ìš©ìê°€ í‚¤ìš°ëŠ” í’ˆì¢…ì˜ ì •ë³´
             data_1 = urllib.request.urlopen(url_1).read().decode('utf-8')
             j_1 = json.loads(data_1)
             temp_1 = j_1[farm_id]['plant']
  
-            url_2 = "http://easyfarm.dothome.co.kr/db/raspberry.php" #Ç°Á¾¿¡ ´ëÇÑ Á¤º¸
+            url_2 = "http://easyfarm.dothome.co.kr/db/raspberry.php" #í’ˆì¢…ì— ëŒ€í•œ ì •ë³´
             data_2 = urllib.request.urlopen(url_2).read().decode('utf-8')
             j_2 = json.loads(data_2)
-            temp_2 = j_2[temp_1]['water'] #Ç°Á¾ÀÇ ¹° °ø±Ş·®
+            temp_2 = j_2[temp_1]['water'] #í’ˆì¢…ì˜ ë¬¼ ê³µê¸‰ëŸ‰
  
-            requests.post('http://easyfarm.dothome.co.kr/db/soil.php',{'farm_id':farm_id,'plant':temp_1,'moisture':c}).text #µ¥ÀÌÅÍ °ªÀ» À¥¼­¹ö·Î º¸³¿
+            requests.post('http://easyfarm.dothome.co.kr/db/soil.php',{'farm_id':farm_id,'plant':temp_1,'moisture':c}).text #ë°ì´í„° ê°’ì„ ì›¹ì„œë²„ë¡œ ë³´ëƒ„
 finally:
     GPIO.cleanup()
     spi.close()
