@@ -9,7 +9,7 @@
 공간 제약이 없는 DIY 수납장을 활용한 맞춤형 스마트팜
 
 - 개발 환경: Thonny Python IDE, VSCode
-- 개발 언어: Python, PHP
+- 개발 언어: Python, PHP, HTML, CSS
 - 데이터베이스: MySQL
 
 ## 프로젝트 목표(개요)
